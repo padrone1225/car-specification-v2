@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dropdown } from "../dropdown";
 import { useGlobalBasicPropertyContext } from "../context/basicPropertyContext";
 import { useGlobalCarContext } from "../context/carListContext";
-import { useGlobalSpecification } from "../context/carSpecificationContext";
+import {
+  BasicStructure,
+  CheckStructure,
+  NameStructure,
+  useGlobalSpecification,
+} from "../context/carSpecificationContext";
 import { useGlobalOtherPropertyContext } from "../context/otherPropertyContext";
 import { useGlobalDataContext } from "../context/specificationDataContext";
-
-export interface SpecDataType {
-  label: string;
-  type: string;
-  value: string;
-}
+import { PropertyStructure } from "../context/allPropertiesContext";
 
 export const SpecificationForm = () => {
   const { cars, setCars } = useGlobalCarContext();
@@ -20,71 +20,66 @@ export const SpecificationForm = () => {
     useGlobalOtherPropertyContext();
   const { dataStructure, setDataStructure } = useGlobalDataContext();
 
-  const [specifications, setSpecifications] = useState<Array<SpecDataType>>([]);
+  const [specifications, setSpecifications] = useState<
+    Array<PropertyStructure>
+  >([]);
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-    let list = [];
-    let flag = false;
     let hood = "";
-    let checker = [];
-    for (let i of event.target) {
-      if (i.getAttribute("name") === "carName") {
-        list.push({ name: i.value });
-        if (
-          cars.findIndex((car) => car.toLowerCase() === i.value.toLowerCase()) >
-          -1
-        ) {
-          flag = true;
-        } else {
-          setCars([...cars, i.value]);
+    let checkList: Array<CheckStructure> = [];
+    let list: Array<BasicStructure | NameStructure | CheckStructure> = [];
+    for (let item of event.target) {
+      if (item.getAttribute("name") === "carName") {
+        if (!item.value) {
+          alert("Sorry! Please input car name.");
+          return;
         }
+        list.push({ name: item.value });
+        item.value = "";
       }
-      if (i.getAttribute("name") === "hood") {
-        hood = i.value;
+      if (item.getAttribute("name") === "hood") {
+        hood = item.value;
       }
-      if (flag) {
-        for (let j of otherProperties) {
-          if (i.getAttribute("name") === j.value) {
-            j.label = i.checked;
-            checker.push(j);
+      if (item.getAttribute("id") === "checkbox") {
+        otherProperties.map((prop) => {
+          if (prop.value === item.getAttribute("name")) {
+            checkList.push({ value: prop.value, label: item.checked });
           }
-        }
+          return null;
+        });
       }
     }
-    if (flag) {
-      specifications.map((item) =>
-        list.push({ value: item.type, label: item.value })
-      );
-      list.push(...checker);
-      list.push({ value: "hood", label: hood });
-      let temp = [];
-      for (let i of carSpecifications) {
-        if (i[0].name === list[0].name) {
-          temp.push(list);
-        } else {
-          temp.push(i);
-        }
-      }
-      setCarSpecifications(temp);
-    } else {
-      list.push(...basicProperties);
-      list.push(...otherProperties);
-      list.push({ value: "hood", label: hood });
+
+    specifications.map((item) =>
+      list.push({ value: item.type, label: item.value })
+    );
+    list.push(...checkList);
+    list.push({ value: "hood", label: hood });
+    const name = (list[0] as NameStructure).name;
+    const index = cars.findIndex((car) => car === name);
+    if (index === -1) {
       setCarSpecifications([...carSpecifications, list]);
+      setCars([...cars, name]);
+    } else {
+      carSpecifications[index] = list;
+      setCarSpecifications(carSpecifications);
     }
+    setSpecifications([]);
   };
 
   const addNewOption = () => {
     let option = prompt("Please enter option name");
-    let temp = [];
-    temp.push(...otherProperties);
-    temp.push({ value: option, label: false });
-    setOtherProperties([...otherProperties, { value: option, label: false }]);
-    setDataStructure([
-      ...dataStructure,
-      { value: option, label: option?.toUpperCase() },
-    ]);
+    if (option) {
+      setOtherProperties([
+        ...otherProperties,
+        { value: option, label: false } as CheckStructure,
+      ]);
+      setDataStructure([
+        ...dataStructure,
+        { value: option, label: option?.toUpperCase() } as BasicStructure,
+      ]);
+    }
   };
 
   const addNewProp = () => {};
@@ -100,7 +95,7 @@ export const SpecificationForm = () => {
           <input
             type="text"
             name="carName"
-            id="carName"
+            id="property"
             className="w-full border-2 border-primary-dark rounded-md h-7 p-2"
           />
         </div>
@@ -116,7 +111,7 @@ export const SpecificationForm = () => {
         <div id="checkGroup" className="grid grid-cols-5 gap-3">
           {otherProperties.map((property, id) => (
             <label key={id} className="flex gap-2">
-              <input type="checkbox" name={property.value} />
+              <input type="checkbox" name={property.value} id="checkbox" />
               {dataStructure.filter((e) => e.value === property.value)[0].label}
             </label>
           ))}
@@ -126,23 +121,17 @@ export const SpecificationForm = () => {
           <input
             type="text"
             name="hood"
-            id="hood"
+            id="property"
             className="w-full border-2 border-primary-dark rounded-md h-7 p-2"
           />
         </div>
         <div className="grid grid-cols-3 gap-5 " id="btnGroup">
-          <button
-            className="bg-secondary-light h-10 rounded-md border-2 border-primary-dark font-bold text-xl"
-            onClick={() => addNewOption()}
-          >
-            + new option
-          </button>
-          <button
-            className="bg-secondary-light h-10 rounded-md border-2 border-primary-dark font-bold text-xl"
-            onClick={() => addNewProp()}
-          >
-            + new prop
-          </button>
+          <label className="bg-secondary-light h-10 rounded-md border-2 border-primary-dark font-bold text-xl flex justify-center items-center cursor-pointer">
+            <input type="button" onClick={() => addNewOption()} />+ new option
+          </label>
+          <label className="bg-secondary-light h-10 rounded-md border-2 border-primary-dark font-bold text-xl flex justify-center items-center cursor-pointer">
+            <input type="button" onClick={() => addNewProp()} />+ new prop
+          </label>
           <button
             type="submit"
             className="bg-secondary-light rounded-md border-2 border-primary-dark font-bold text-xl"

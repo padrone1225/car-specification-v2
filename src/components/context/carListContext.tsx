@@ -1,8 +1,8 @@
 import { createContext, useContext } from "react";
 
 export type CarContext = {
-  cars: string[];
-  setCars: (c: string[]) => void;
+  cars: Array<string>;
+  setCars: (c: Array<string>) => void;
 };
 
 export const GlobalCarContext = createContext<CarContext>({

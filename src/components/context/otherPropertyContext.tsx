@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
+import { CheckStructure } from "./carSpecificationContext";
 
 export type OtherContext = {
-  otherProperties: any[];
-  setOtherProperties: (c: any[]) => void;
+  otherProperties: Array<CheckStructure>;
+  setOtherProperties: (c: Array<CheckStructure>) => void;
 };
 
 export const GlobalOtherPropertyContext = createContext<OtherContext>({

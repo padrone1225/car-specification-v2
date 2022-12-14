@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
+import { BasicStructure } from "./carSpecificationContext";
 
 export type BasicContext = {
-  basicProperties: any[];
-  setBasicProperties: (c: any[]) => void;
+  basicProperties: Array<BasicStructure>;
+  setBasicProperties: (c: Array<BasicStructure>) => void;
 };
 
 export const GlobalBasicPropertyContext = createContext<BasicContext>({

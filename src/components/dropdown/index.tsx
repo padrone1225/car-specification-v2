@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useGlobalAllContext } from "../context/allPropertiesContext";
-import { SpecDataType } from "../form";
+import {
+  PropertyStructure,
+  useGlobalAllContext,
+} from "../context/allPropertiesContext";
 
 const Icon = () => {
   return (
@@ -18,12 +20,16 @@ export const Dropdown = ({
 }: {
   style: string;
   placeHolder: string;
-  specifications: SpecDataType[];
-  setSpecifications: (c: Array<SpecDataType>) => void;
+  specifications: PropertyStructure[];
+  setSpecifications: (c: Array<PropertyStructure>) => void;
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [lists, setLists] = useState<any>([]);
-  const [selectedValue, setSelectedValue] = useState<any>(null);
+  const [selectedValue, setSelectedValue] = useState<PropertyStructure>({
+    value: "",
+    label: "",
+    type: "",
+  });
 
   const { allList } = useGlobalAllContext();
 
@@ -42,18 +48,28 @@ export const Dropdown = ({
   //   };
   // });
 
+  useEffect(() => {
+    if (specifications.length === 0) {
+      setSelectedValue({
+        value: "",
+        label: "",
+        type: "",
+      });
+    }
+  }, [specifications]);
+
   const handleInputclick = (e: any) => {
     setShowMenu(!showMenu);
   };
 
   const getDisplay = () => {
-    if (!selectedValue) {
+    if (selectedValue.label === "" || specifications.length === 0) {
       return placeHolder;
     }
     return selectedValue.label;
   };
 
-  const onItemClick = (option: any) => {
+  const onItemClick = (option: PropertyStructure) => {
     setSelectedValue(option);
     if (specifications) {
       let index = specifications.findIndex((item) => item.type === option.type);

@@ -1,8 +1,14 @@
 import { createContext, useContext } from "react";
 
+export type PropertyStructure = {
+  value: string;
+  label: string;
+  type: string;
+};
+
 export type AllContext = {
-  allList: any[];
-  setAllList: (c: any[]) => void;
+  allList: Array<PropertyStructure>;
+  setAllList: (c: Array<PropertyStructure>) => void;
 };
 
 export const GlobalAllContext = createContext<AllContext>({

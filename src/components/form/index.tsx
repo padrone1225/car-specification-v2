@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Dropdown } from "../dropdown";
 import { useGlobalBasicPropertyContext } from "../context/basicPropertyContext";
 import { useGlobalCarContext } from "../context/carListContext";
@@ -11,6 +11,7 @@ import {
 import { useGlobalOtherPropertyContext } from "../context/otherPropertyContext";
 import { useGlobalDataContext } from "../context/specificationDataContext";
 import { PropertyStructure } from "../context/allPropertiesContext";
+import { Modal } from "../madal";
 
 export const SpecificationForm = () => {
   const { cars, setCars } = useGlobalCarContext();
@@ -20,6 +21,7 @@ export const SpecificationForm = () => {
     useGlobalOtherPropertyContext();
   const { dataStructure, setDataStructure } = useGlobalDataContext();
 
+  const [isOpen, setIsOpen] = useState(false);
   const [specifications, setSpecifications] = useState<
     Array<PropertyStructure>
   >([]);
@@ -49,6 +51,11 @@ export const SpecificationForm = () => {
           return null;
         });
       }
+    }
+
+    const checkNameFild = list[0] as NameStructure;
+    if (!checkNameFild) {
+      return;
     }
 
     specifications.map((item) =>
@@ -82,7 +89,10 @@ export const SpecificationForm = () => {
     }
   };
 
-  const addNewProp = () => {};
+  const getPropertyLabel = (property: BasicStructure) => {
+    const label = dataStructure.filter((item) => item.value === property.value);
+    return label[0].label;
+  };
 
   return (
     <div className="border-2 border-primary-dark flex items-center justify-center flex-col py-14">
@@ -102,7 +112,7 @@ export const SpecificationForm = () => {
         {basicProperties.map((property, index) => (
           <Dropdown
             style={property.value}
-            placeHolder={dataStructure[index].label}
+            placeHolder={getPropertyLabel(property)}
             key={index}
             specifications={specifications}
             setSpecifications={setSpecifications}
@@ -130,7 +140,7 @@ export const SpecificationForm = () => {
             <input type="button" onClick={() => addNewOption()} />+ new option
           </label>
           <label className="bg-secondary-light h-10 rounded-md border-2 border-primary-dark font-bold text-xl flex justify-center items-center cursor-pointer">
-            <input type="button" onClick={() => addNewProp()} />+ new prop
+            <input type="button" onClick={() => setIsOpen(!isOpen)} />+ new prop
           </label>
           <button
             type="submit"
@@ -138,6 +148,7 @@ export const SpecificationForm = () => {
           >
             Save
           </button>
+          <Modal isOpen={isOpen} setIsOpen={setIsOpen} />
         </div>
       </form>
     </div>

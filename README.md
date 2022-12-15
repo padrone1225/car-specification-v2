@@ -5,4 +5,4 @@ This project make with React, Typescript and TailwindCSS.
 
 ## Screenshot
 
-<img src="../screenshot/screenshot.jpg" />
+<img src="./screenshot/screenshot.jpg" />

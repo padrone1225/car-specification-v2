@@ -40,13 +40,15 @@ export const Dropdown = ({
   }, [showMenu]);
 
   // useEffect(() => {
-  //   const handler = () => setShowMenu(false);
+  //   const handler = () => {
+  //     setShowMenu(false);
+  //   };
   //   console.log("h", handler);
   //   window.addEventListener("click", handler);
   //   return () => {
   //     window.removeEventListener("click", handler);
   //   };
-  // });
+  // }, []);
 
   useEffect(() => {
     if (specifications.length === 0) {
@@ -80,6 +82,7 @@ export const Dropdown = ({
         setSpecifications(specifications);
       }
     }
+    setShowMenu(false);
   };
 
   const isSelected = (option: any) => {

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/car-specification-v2/static/css/main.a62503e5.css",
+    "main.js": "/car-specification-v2/static/js/main.6f0e5516.js",
+    "static/js/787.8330a283.chunk.js": "/car-specification-v2/static/js/787.8330a283.chunk.js",
+    "index.html": "/car-specification-v2/index.html",
+    "main.a62503e5.css.map": "/car-specification-v2/static/css/main.a62503e5.css.map",
+    "main.6f0e5516.js.map": "/car-specification-v2/static/js/main.6f0e5516.js.map",
+    "787.8330a283.chunk.js.map": "/car-specification-v2/static/js/787.8330a283.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a62503e5.css",
+    "static/js/main.6f0e5516.js"
+  ]
+}
